@@ -56,7 +56,7 @@ class AuthCodeStorageTest extends PDOTest
 
 	/**
 	 * @expectedException PDOException
-	 * @expectedExceptionMessageRegExp '.*NOT NULL constraint failed:.*session_id'
+	 * @expectedExceptionMessageRegExp '.*constraint (failed|violation):.*session_id'
 	 */
 	public function testCreateFailedNoSession()
 	{
@@ -65,7 +65,7 @@ class AuthCodeStorageTest extends PDOTest
 
 	/**
 	 * @expectedException PDOException
-	 * @expectedExceptionMessageRegExp '.*NOT NULL constraint failed:.*expire_time'
+	 * @expectedExceptionMessageRegExp '.*constraint (failed|violation):.*expire_time'
 	 */
 	public function testCreateFailedNoExpired()
 	{
@@ -74,7 +74,7 @@ class AuthCodeStorageTest extends PDOTest
 
 	/**
 	 * @expectedException PDOException
-	 * @expectedExceptionMessageRegExp '.*NOT NULL constraint failed:.*auth_code'
+	 * @expectedExceptionMessageRegExp '.*constraint (failed|violation):.*auth_code'
 	 */
 	public function testCreateFailedNoCode()
 	{
@@ -83,7 +83,7 @@ class AuthCodeStorageTest extends PDOTest
 
 	/**
 	 * @expectedException PDOException
-	 * @expectedExceptionMessageRegExp '.*NOT NULL constraint failed:.*client_redirect_uri'
+	 * @expectedExceptionMessageRegExp '.*constraint (failed|violation):.*client_redirect_uri'
 	 */
 	public function testCreateFailedNoRedirect()
 	{

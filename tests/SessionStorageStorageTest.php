@@ -124,7 +124,7 @@ class SessionStorageTest extends PDOTest
 
 	/**
 	 * @expectedException PDOException
-	 * @expectedExceptionMessageRegExp '.*NOT NULL constraint failed.*client_id'
+	 * @expectedExceptionMessageRegExp '.*constraint (failed|violation).*client_id'
 	 */
 	public function testCreateFailClientNull()
 	{
@@ -133,7 +133,7 @@ class SessionStorageTest extends PDOTest
 
 	/**
 	 * @expectedException PDOException
-	 * @expectedExceptionMessageRegExp '.*NOT NULL constraint failed.*owner_id'
+	 * @expectedExceptionMessageRegExp '.*constraint (failed|violation).*owner_id'
 	 */
 	public function testCreateFailOwnerNull()
 	{
@@ -142,7 +142,7 @@ class SessionStorageTest extends PDOTest
 
 	/**
 	 * @expectedException PDOException
-	 * @expectedExceptionMessageRegExp '.*NOT NULL constraint failed.*owner_type'
+	 * @expectedExceptionMessageRegExp '.*constraint (failed|violation).*owner_type'
 	 */
 	public function testCreateFailTypeNull()
 	{

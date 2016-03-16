@@ -64,7 +64,7 @@ class RefreshTokenStorageTest extends PDOTest
 
 	/**
 	 * @expectedException PDOException
-	 * @expectedExceptionMessageRegExp '.*NOT NULL constraint failed:.*access_token'
+	 * @expectedExceptionMessageRegExp '.*constraint (failed|violation):.*access_token'
 	 */
 	public function testCreateFailedNoAccessToken()
 	{
@@ -73,7 +73,7 @@ class RefreshTokenStorageTest extends PDOTest
 
 	/**
 	 * @expectedException PDOException
-	 * @expectedExceptionMessageRegExp '.*NOT NULL constraint failed:.*expire_time'
+	 * @expectedExceptionMessageRegExp '.*constraint (failed|violation):.*expire_time'
 	 */
 	public function testCreateFailedNoExpired()
 	{
@@ -82,7 +82,7 @@ class RefreshTokenStorageTest extends PDOTest
 
 	/**
 	 * @expectedException PDOException
-	 * @expectedExceptionMessageRegExp '.*NOT NULL constraint failed:.*refresh_token'
+	 * @expectedExceptionMessageRegExp '.*constraint (failed|violation):.*refresh_token'
 	 */
 	public function testCreateFailedNoCode()
 	{
