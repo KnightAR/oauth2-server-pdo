@@ -9,10 +9,10 @@ storage interfaces for PDO Storage.
 ```php
 $pdo = new PDO('sqlite:oauth2.db');
 
-$sessionStorage = new Storage\SessionStorage($pdo);
-$accessTokenStorage = new Storage\AccessTokenStorage($pdo);
-$clientStorage = new Storage\ClientStorage($pdo);
-$scopeStorage = new Storage\ScopeStorage($pdo);
+$sessionStorage = new SessionStorage($pdo);
+$accessTokenStorage = new AccessTokenStorage($pdo);
+$clientStorage = new ClientStorage($pdo);
+$scopeStorage = new ScopeStorage($pdo);
 
 $server = new ResourceServer(
     $sessionStorage,
