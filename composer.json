@@ -1,7 +1,6 @@
 {
   "name": "dboho/oauth2-server-pdo",
-  "description": "Implementation of thephpleague oauth2 server storage interfaces for PDO 
-storage",
+  "description": "Implementation of thephpleague oauth2 server storage interfaces for PDO storage",
   "minimum-stability": "stable",
   "license": "MIT",
   "authors": [
