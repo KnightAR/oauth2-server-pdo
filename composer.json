@@ -1,0 +1,22 @@
+{
+  "name": "dboho/oauth2-server-pdo",
+  "description": "Implementation of thephpleague oauth2 server storage interfaces for PDO 
+storage",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "David Wiesner"
+    }
+  ],
+  "autoload": {
+    "psr-4": {"DBoho\\OAuth2\\Server\\Storage\\PDO\\" : "src"}
+  },
+  "require": {
+    "league/oauth2-server": "^4.1"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^4.0",
+    "satooshi/php-coveralls": "~1.0"
+  }
+}
