@@ -1,5 +1,5 @@
 # PDO Storage for thephpleague oauth2 server
-[![Travis branch](https://img.shields.io/travis/DavidWiesner/oauth2-server-pdo/master.svg?style=flat-square)](https://travis-ci.org/DavidWiesner/oauth2-server-pdo) [![Coveralls branch](https://img.shields.io/coveralls/DavidWiesner/oauth2-server-pdo/master.svg?style=flat-square)](https://coveralls.io/github/DavidWiesner/oauth2-server-pdo?branch=master)
+[![Travis branch](https://img.shields.io/travis/DavidWiesner/oauth2-server-pdo/master.svg?style=flat-square)](https://travis-ci.org/DavidWiesner/oauth2-server-pdo) [![Codecov](https://img.shields.io/codecov/c/github/DavidWiesner/oauth2-server-pdo.svg?style=flat-square)](https://codecov.io/github/DavidWiesner/oauth2-server-pdo?branch=master)
 
 This is an Implentation of the [thephpleague/oauth2-server](/thephpleague/oauth2-server/) 
 storage interfaces for PDO Storage.
