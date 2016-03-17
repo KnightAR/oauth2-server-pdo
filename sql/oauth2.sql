@@ -1,5 +1,5 @@
 BEGIN TRANSACTION;
-CREATE TABLE "users" ("id" integer not null primary key autoincrement, "username" varchar not null, "password" varchar not null, "name" varchar not null, "email" varchar not null, "photo" varchar not null);
+--CREATE TABLE "users" ("id" integer not null primary key autoincrement, "username" varchar not null, "password" varchar not null, "name" varchar not null, "email" varchar not null, "photo" varchar not null);
 --INSERT INTO `users` VALUES(1,'alexbilbie','$2y$10$hZEDpwByBA05/ZTQaQozZe/inW.IcFhZhbpXOSyQbiOd04vWLujNG','Alex Bilbie','hello@alexbilbie.com','https://s.gravatar.com/avatar/14902eb1dac66b8458ebbb481d80f0a3');
 --INSERT INTO `users` VALUES(2,'philsturgeon','$2y$10$473th0UCj3v3DukSFVOA4eIuKM5vBqE.rds8JxpXUn1HW9it1a7GW','Phil Sturgeon','email@philsturgeon.co.uk','https://s.gravatar.com/avatar/14df293d6c5cd6f05996dfc606a6a951');
 CREATE TABLE "oauth_sessions" ("id" integer not null primary key autoincrement, "owner_type" varchar not null, "owner_id" varchar not null, "client_id" varchar not null, "client_redirect_uri" varchar null, foreign key("client_id") references "oauth_clients"("id") on delete cascade);
