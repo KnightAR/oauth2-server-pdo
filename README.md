@@ -22,3 +22,12 @@ $server = new ResourceServer(
 );
 //…
 ```
+## Installation
+
+The recommended installation method is via [Composer](https://getcomposer.org/).
+
+In your project root just run:
+
+```bash
+$ composer require dboho/oauth2-server-pdo
+```
