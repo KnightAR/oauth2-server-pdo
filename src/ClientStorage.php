@@ -51,10 +51,7 @@ class ClientStorage extends Storage implements ClientInterface
 		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		if (count($result) === 1) {
 			$client = new ClientEntity($this->getServer());
-			$client->hydrate([
-					'id' => $result[0]['id'],
-					'name' => $result[0]['name']
-			]);
+			$client->hydrate($result[0]);
 			return $client;
 		}
 

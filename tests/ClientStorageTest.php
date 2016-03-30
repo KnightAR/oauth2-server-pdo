@@ -54,6 +54,7 @@ class ClientStorageTest extends PDOTest
 		$this->assertNotNull($client);
 		$this->assertEquals('11Client', $client->getId());
 		$this->assertEquals('11Name', $client->getName());
+		$this->assertEquals('11Secret', $client->getSecret());
 	}
 
 	public function testGetBySessionFailed()
