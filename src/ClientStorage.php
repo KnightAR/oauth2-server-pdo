@@ -44,11 +44,8 @@ class ClientStorage extends Storage implements ClientInterface
 			$binds[':redirectUri'] = $redirectUri;
 		}
 
-		$stmt = $this->pdo->prepare($sql . implode(' AND ', $where));
+		$result = $this->run($sql . implode(' AND ', $where), $binds);
 
-		$stmt->execute($binds);
-
-		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
 		if (count($result) === 1) {
 			$client = new ClientEntity($this->getServer());
 			$client->hydrate($result[0]);
@@ -67,13 +64,9 @@ class ClientStorage extends Storage implements ClientInterface
 	 */
 	public function getBySession(SessionEntity $session)
 	{
-		$stmt = $this->pdo->prepare('SELECT client.id, client.name FROM oauth_clients as client
+		$result = $this->run('SELECT client.id, client.name FROM oauth_clients as client
 							LEFT JOIN oauth_sessions as sess  ON(sess.client_id = client.id)
-							WHERE sess.id = :sessionId');
-		$stmt->bindValue(':sessionId', $session->getId());
-		$stmt->execute();
-
-		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+							WHERE sess.id = ?', [$session->getId()]);
 		if (count($result) === 1) {
 			$client = new ClientEntity($this->getServer());
 			$client->hydrate([
@@ -82,5 +75,6 @@ class ClientStorage extends Storage implements ClientInterface
 			]);
 			return $client;
 		}
+		return null;
 	}
 }

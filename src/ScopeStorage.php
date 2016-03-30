@@ -26,10 +26,7 @@ class ScopeStorage extends Storage implements ScopeInterface
 	 */
 	public function get($scope, $grantType = null, $clientId = null)
 	{
-		$stmt = $this->pdo->prepare('SELECT * FROM oauth_scopes WHERE id = :scope');
-		$stmt->bindValue(':scope', $scope);
-		$stmt->execute();
-		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		$result = $this->run('SELECT * FROM oauth_scopes WHERE id = ?', [$scope]);
 		if (count($result) === 1) {
 			$scope = new ScopeEntity($this->server);
 			$scope->hydrate($result[0]);

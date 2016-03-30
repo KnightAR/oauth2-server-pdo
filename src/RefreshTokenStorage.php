@@ -24,10 +24,7 @@ class RefreshTokenStorage extends Storage implements RefreshTokenInterface
 	 */
 	public function get($token)
 	{
-		$stmt = $this->pdo->prepare('SELECT * FROM oauth_refresh_tokens WHERE refresh_token = :token');
-		$stmt->bindValue(':token', $token);
-		$stmt->execute();
-		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		$result = $this->run('SELECT * FROM oauth_refresh_tokens WHERE refresh_token = ?', [$token]);
 		if (count($result) === 1) {
 			$token = new RefreshTokenEntity($this->server);
 			$token->setId($result[0]['refresh_token']);
@@ -35,6 +32,7 @@ class RefreshTokenStorage extends Storage implements RefreshTokenInterface
 			$token->setAccessTokenId($result[0]['access_token']);
 			return $token;
 		}
+		return null;
 	}
 
 	/**
@@ -48,9 +46,8 @@ class RefreshTokenStorage extends Storage implements RefreshTokenInterface
 	 */
 	public function create($token, $expireTime, $accessToken)
 	{
-		$stmt = $this->pdo->prepare('INSERT INTO oauth_refresh_tokens (refresh_token, expire_time, access_token)
-							VALUES (?,?,?)');
-		$stmt->execute([$token, $expireTime, $accessToken]);
+		$this->run('INSERT INTO oauth_refresh_tokens (refresh_token, expire_time, access_token)
+							VALUES (?,?,?)', [$token, $expireTime, $accessToken]);
 		return $this->pdo->lastInsertId();
 	}
 
@@ -63,8 +60,6 @@ class RefreshTokenStorage extends Storage implements RefreshTokenInterface
 	 */
 	public function delete(RefreshTokenEntity $token)
 	{
-		$stmt = $this->pdo->prepare('DELETE FROM oauth_refresh_tokens WHERE refresh_token = :token');
-		$stmt->bindValue(':token', $token->getId());
-		$stmt->execute();
+		$this->run('DELETE FROM oauth_refresh_tokens WHERE refresh_token = ?', [$token->getId()]);
 	}
 }

@@ -12,7 +12,6 @@ namespace DBoho\OAuth2\Server\Storage\PDO;
 use League\OAuth2\Server\Entity\AuthCodeEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Storage\AuthCodeInterface;
-use PDO;
 
 class AuthCodeStorage extends Storage implements AuthCodeInterface
 {
@@ -23,13 +22,11 @@ class AuthCodeStorage extends Storage implements AuthCodeInterface
 	 * @param string $code
 	 *
 	 * @return \League\OAuth2\Server\Entity\AuthCodeEntity | null
+	 * @throws \PDOException
 	 */
 	public function get($code)
 	{
-		$stmt = $this->pdo->prepare('SELECT * FROM oauth_auth_codes WHERE auth_code = :authCode');
-		$stmt->bindValue(':authCode', $code);
-		$stmt->execute();
-		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		$result = $this->run('SELECT * FROM oauth_auth_codes WHERE auth_code = ?', [$code]);
 		if (count($result) === 1) {
 			$token = new AuthCodeEntity($this->server);
 			$token->setId($result[0]['auth_code']);
@@ -37,6 +34,7 @@ class AuthCodeStorage extends Storage implements AuthCodeInterface
 			$token->setExpireTime($result[0]['expire_time']);
 			return $token;
 		}
+		return null;
 	}
 
 	/**
@@ -47,15 +45,14 @@ class AuthCodeStorage extends Storage implements AuthCodeInterface
 	 * @param integer $sessionId Session identifier
 	 * @param string $redirectUri Client redirect uri
 	 *
-	 * @return void
+	 * @return int lastInsertId
+	 * @throws \PDOException
 	 */
 	public function create($token, $expireTime, $sessionId, $redirectUri)
 	{
-		$stmt = $this->pdo->prepare('INSERT INTO oauth_auth_codes (auth_code, expire_time, session_id, client_redirect_uri)
-							VALUES (?,?,?,?)');
-		$stmt->execute([$token, $expireTime, $sessionId, $redirectUri]);
+		$this->run('INSERT INTO oauth_auth_codes (auth_code, expire_time, session_id, client_redirect_uri)
+							VALUES (?,?,?,?)', [$token, $expireTime, $sessionId, $redirectUri]);
 		return $this->pdo->lastInsertId();
-
 	}
 
 	/**
@@ -64,16 +61,15 @@ class AuthCodeStorage extends Storage implements AuthCodeInterface
 	 * @param \League\OAuth2\Server\Entity\AuthCodeEntity $token The auth code
 	 *
 	 * @return \League\OAuth2\Server\Entity\ScopeEntity[] Array of \League\OAuth2\Server\Entity\ScopeEntity
+	 * @throws \PDOException
 	 */
 	public function getScopes(AuthCodeEntity $token)
 	{
-		$stmt = $this->pdo->prepare('SELECT scope.* FROM oauth_auth_codes as code
+		$results = $this->run('SELECT scope.* FROM oauth_auth_codes as code
 							 JOIN oauth_auth_code_scopes AS acs ON(acs.auth_code=code.auth_code)
 							 JOIN oauth_scopes as scope ON(scope.id=acs.scope)
-							 WHERE code.auth_code = :authCode');
-		$stmt->bindValue(':authCode', $token->getId());
-		$stmt->execute();
-		$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+							 WHERE code.auth_code = ?',
+				[$token->getId()]);
 		$scopes = [];
 		foreach ($results as $scope) {
 			$scopes[] = (new ScopeEntity($this->server))->hydrate([
@@ -91,11 +87,12 @@ class AuthCodeStorage extends Storage implements AuthCodeInterface
 	 * @param \League\OAuth2\Server\Entity\ScopeEntity $scope The scope
 	 *
 	 * @return void
+	 * @throws \PDOException
 	 */
 	public function associateScope(AuthCodeEntity $token, ScopeEntity $scope)
 	{
-		$stmt = $this->pdo->prepare('INSERT INTO oauth_auth_code_scopes (auth_code, scope) VALUES (?,?)');
-		$stmt->execute([$token->getId(), $scope->getId()]);
+		$this->run('INSERT INTO oauth_auth_code_scopes (auth_code, scope) VALUES (?,?)',
+				[$token->getId(), $scope->getId()]);
 	}
 
 	/**
@@ -107,8 +104,6 @@ class AuthCodeStorage extends Storage implements AuthCodeInterface
 	 */
 	public function delete(AuthCodeEntity $token)
 	{
-		$stmt = $this->pdo->prepare('DELETE FROM oauth_auth_codes WHERE auth_code = :authCode');
-		$stmt->bindValue(':authCode', $token->getId());
-		$stmt->execute();
+		$this->run('DELETE FROM oauth_auth_codes WHERE auth_code = ?', [$token->getId()]);
 	}
 }

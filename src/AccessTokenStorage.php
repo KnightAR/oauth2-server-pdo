@@ -12,7 +12,6 @@ namespace DBoho\OAuth2\Server\Storage\PDO;
 use League\OAuth2\Server\Entity\AccessTokenEntity;
 use League\OAuth2\Server\Entity\ScopeEntity;
 use League\OAuth2\Server\Storage\AccessTokenInterface;
-use PDO;
 
 class AccessTokenStorage extends Storage implements AccessTokenInterface
 {
@@ -26,16 +25,14 @@ class AccessTokenStorage extends Storage implements AccessTokenInterface
 	 */
 	public function get($token)
 	{
-		$stmt = $this->pdo->prepare('SELECT * FROM oauth_access_tokens WHERE access_token = :token');
-		$stmt->bindValue(':token', $token);
-		$stmt->execute();
-		$result = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+		$result = $this->run('SELECT * FROM oauth_access_tokens WHERE access_token = ?',[$token]);
 		if (count($result) === 1) {
 			$token = new AccessTokenEntity($this->server);
 			$token->setId($result[0]['access_token']);
 			$token->setExpireTime($result[0]['expire_time']);
 			return $token;
 		}
+		return null;
 	}
 
 	/**
@@ -44,16 +41,15 @@ class AccessTokenStorage extends Storage implements AccessTokenInterface
 	 * @param \League\OAuth2\Server\Entity\AccessTokenEntity $token The access token
 	 *
 	 * @return \League\OAuth2\Server\Entity\ScopeEntity[] Array of \League\OAuth2\Server\Entity\ScopeEntity
+	 * @throws \PDOException
 	 */
 	public function getScopes(AccessTokenEntity $token)
 	{
-		$stmt = $this->pdo->prepare('SELECT scope.* FROM oauth_access_tokens as token
+		$results = $this->run('SELECT scope.* FROM oauth_access_tokens as token
 							 JOIN oauth_access_token_scopes AS acs ON(acs.access_token=token.access_token)
 							 JOIN oauth_scopes as scope ON(scope.id=acs.scope)
-							 WHERE token.access_token = :token');
-		$stmt->bindValue(':token', $token->getId());
-		$stmt->execute();
-		$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+							 WHERE token.access_token = :token',
+				[':token'=> $token->getId()]);
 		$scopes = [];
 		foreach ($results as $scope) {
 			$scopes[] = (new ScopeEntity($this->server))->hydrate([
@@ -72,13 +68,12 @@ class AccessTokenStorage extends Storage implements AccessTokenInterface
 	 * @param integer $expireTime The expire time expressed as a unix timestamp
 	 * @param string|integer $sessionId The session ID
 	 *
-	 * @return void
+	 * @return int lastInsertId
 	 */
 	public function create($token, $expireTime, $sessionId)
 	{
-		$stmt = $this->pdo->prepare('INSERT INTO oauth_access_tokens (access_token, expire_time, session_id)
-							VALUES (?,?,?)');
-		$stmt->execute([$token, $expireTime, $sessionId]);
+		$this->run('INSERT INTO oauth_access_tokens (access_token, expire_time, session_id)
+							VALUES (?,?,?)', [$token, $expireTime, $sessionId]);
 		return $this->pdo->lastInsertId();
 	}
 
@@ -92,8 +87,8 @@ class AccessTokenStorage extends Storage implements AccessTokenInterface
 	 */
 	public function associateScope(AccessTokenEntity $token, ScopeEntity $scope)
 	{
-		$stmt = $this->pdo->prepare('INSERT INTO oauth_access_token_scopes (access_token, scope) VALUES (?,?)');
-		$stmt->execute([$token->getId(), $scope->getId()]);
+		$this->run('INSERT INTO oauth_access_token_scopes (access_token, scope) VALUES (?,?)'
+				,[$token->getId(), $scope->getId()]);
 	}
 
 	/**
@@ -105,8 +100,7 @@ class AccessTokenStorage extends Storage implements AccessTokenInterface
 	 */
 	public function delete(AccessTokenEntity $token)
 	{
-		$stmt = $this->pdo->prepare('DELETE FROM oauth_access_tokens WHERE access_token = :token');
-		$stmt->bindValue(':token', $token->getId());
-		$stmt->execute();
+		$this->run('DELETE FROM oauth_access_tokens WHERE access_token = :token',
+				[ ':token'=>$token->getId()]);
 	}
 }
